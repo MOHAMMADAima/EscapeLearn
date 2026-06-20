@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { Trophy, Share2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/play/$roomId/results")({
   head: () => ({ meta: [{ title: "Results — EscapeLearn" }] }),
@@ -119,6 +119,13 @@ function Results() {
       .eq("id", sess!.id);
     setSaved(true);
     track("game_completed", { total_time: seconds, score, hints_used: sess!.hints_used });
+    pendoTrack("game_completed", {
+      total_time: seconds,
+      score,
+      hints_used: sess!.hints_used,
+      rooms_completed: completedRooms,
+      escaped,
+    });
     toast.success("Results saved");
   }
 
@@ -129,6 +136,12 @@ function Results() {
     );
     toast.success("Share text copied");
     track("results_shared", { roomId });
+    pendoTrack("results_shared", {
+      roomId,
+      score,
+      total_time: seconds,
+      room_code: er!.room_code,
+    });
   }
 
   return (

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 import { RoomShell } from "@/components/game/RoomShell";
 import { LeversRoom } from "@/components/game/LeversRoom";
 import { CircuitRoom } from "@/components/game/CircuitRoom";
@@ -131,6 +131,14 @@ function RoomPage() {
         time_spent: timeSpent,
         hints_used: hintsUsed,
       });
+      pendoTrack("room_completed", {
+        room_number: current.room_number,
+        time_spent: timeSpent,
+        hints_used: hintsUsed,
+        mechanic: current.mechanic,
+        sessionId,
+        concept: current.concept,
+      });
     } catch (e) {
       console.error(e);
     }
@@ -151,6 +159,13 @@ function RoomPage() {
     setWrongFlash((n) => n + 1);
     if (current) {
       track("answer_incorrect", { room_number: current.room_number });
+      pendoTrack("answer_incorrect", {
+        room_number: current.room_number,
+        mechanic: current.mechanic,
+        attempt_count: wrongFlash + 1,
+        sessionId,
+        concept: current.concept,
+      });
     }
   }
 
@@ -172,7 +187,16 @@ function RoomPage() {
     } catch (e) {
       console.error(e);
     }
-    if (current) track("hint_used", { room_number: current.room_number });
+    if (current) {
+      track("hint_used", { room_number: current.room_number });
+      pendoTrack("hint_used", {
+        room_number: current.room_number,
+        is_boss_room: false,
+        mechanic: current.mechanic,
+        hints_used_total: hintsUsed + 1,
+        sessionId,
+      });
+    }
   }
 
   if (!current) {

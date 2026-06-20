@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { GraduationCap, Users, Sparkles, Lock, KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { pendoTrack } from "@/lib/analytics";
 import { LandingScene } from "@/components/landing/LandingScene";
 import { NavBar } from "@/components/landing/NavBar";
 
@@ -58,6 +59,16 @@ function AuthPage() {
         .eq("id", u.user.id)
         .maybeSingle();
       const userRole = (profile?.role ?? role) as "student" | "teacher";
+      if (mode === "signup") {
+        pendoTrack("user_signed_up", {
+          role: userRole,
+          auth_method: "email",
+        });
+      } else {
+        pendoTrack("user_signed_in", {
+          role: userRole,
+        });
+      }
       navigate({
         to: userRole === "teacher" ? "/dashboard/teacher" : "/dashboard/student",
       });

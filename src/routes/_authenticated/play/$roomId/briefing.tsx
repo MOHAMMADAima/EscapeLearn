@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { ArrowRight, KeyRound } from "lucide-react";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/play/$roomId/briefing")({
   head: () => ({ meta: [{ title: "Briefing — EscapeLearn" }] }),
@@ -80,6 +80,12 @@ function Briefing() {
         sessionId = sess.id;
       }
       track("game_started", { roomId, sessionId });
+      pendoTrack("game_started", {
+        roomId,
+        sessionId,
+        is_new_session: !existing,
+        room_count: rooms.length,
+      });
       const target = rooms[currentIdx];
       if (!target) throw new Error("No rooms");
       if (target.is_boss_room) {

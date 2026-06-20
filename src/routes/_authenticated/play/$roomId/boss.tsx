@@ -6,7 +6,7 @@ import { useSession } from "@/lib/use-session";
 import { evaluateAnswer } from "@/lib/escape-room.functions";
 import { Lightbulb, Flame, AlertCircle, Unlock } from "lucide-react";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/play/$roomId/boss")({
   head: () => ({ meta: [{ title: "Final Challenge — EscapeLearn" }] }),
@@ -74,7 +74,16 @@ function BossRoom() {
       .from("game_sessions")
       .update({ hints_used: (data?.hints_used ?? 0) + 1 })
       .eq("id", sessionId);
-    if (boss) track("hint_used", { room_number: boss.room_number });
+    if (boss) {
+      track("hint_used", { room_number: boss.room_number });
+      pendoTrack("hint_used", {
+        room_number: boss.room_number,
+        is_boss_room: true,
+        mechanic: "boss",
+        hints_used_total: 1,
+        sessionId,
+      });
+    }
   }
 
   async function submit() {
@@ -104,11 +113,23 @@ function BossRoom() {
         setSuccess(true);
         setFeedback({ ok: true, text: res.feedback });
         track("boss_room_completed", { time_spent: timeSpent });
+        pendoTrack("boss_room_completed", {
+          time_spent: timeSpent,
+          hint_used: hintShown,
+          sessionId,
+          roomId,
+        });
         setTimeout(() => {
           navigate({ to: "/play/$roomId/results", params: { roomId } });
         }, 1800);
       } else {
         setFeedback({ ok: false, text: res.feedback });
+        pendoTrack("boss_answer_incorrect", {
+          room_number: boss.room_number,
+          time_spent: timeSpent,
+          hint_used: hintShown,
+          sessionId,
+        });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed");
@@ -118,6 +139,11 @@ function BossRoom() {
   }
 
   function giveUp() {
+    pendoTrack("game_abandoned", {
+      roomId,
+      sessionId,
+      time_spent_in_boss: Math.round((Date.now() - startRef.current) / 1000),
+    });
     navigate({ to: "/play/$roomId/results", params: { roomId } });
   }
 

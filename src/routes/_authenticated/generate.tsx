@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateEscapeRoom } from "@/lib/escape-room.functions";
 import { Upload, FileText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 import { useSession } from "@/lib/use-session";
 
 export const Route = createFileRoute("/_authenticated/generate")({
@@ -53,6 +53,12 @@ function GeneratePage() {
     setBusy(true);
     setStep(0);
     track("pdf_uploaded", { name: file.name, size: file.size });
+    pendoTrack("pdf_uploaded", {
+      file_name: file.name,
+      file_size: file.size,
+      subject: subject || undefined,
+      user_role: profile?.role,
+    });
     const interval = setInterval(() => {
       setStep((s) => (s < STEPS.length - 2 ? s + 1 : s));
     }, 2500);
@@ -67,6 +73,11 @@ function GeneratePage() {
       clearInterval(interval);
       setStep(STEPS.length - 1);
       track("escape_room_generated", { escapeRoomId: res.escapeRoomId });
+      pendoTrack("escape_room_generated", {
+        escapeRoomId: res.escapeRoomId,
+        subject: subject || undefined,
+        user_role: profile?.role,
+      });
       setTimeout(() => {
         if (profile?.role === "teacher") {
           navigate({
@@ -80,7 +91,14 @@ function GeneratePage() {
     } catch (err) {
       clearInterval(interval);
       setBusy(false);
-      toast.error(err instanceof Error ? err.message : "Generation failed");
+      const errorMsg = err instanceof Error ? err.message : "Generation failed";
+      pendoTrack("escape_room_generation_failed", {
+        error_message: errorMsg.substring(0, 100),
+        file_name: file.name,
+        file_size: file.size,
+        subject: subject || undefined,
+      });
+      toast.error(errorMsg);
     }
   }
 

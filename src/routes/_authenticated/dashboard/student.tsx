@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { Sparkles, Hash, Trophy, Clock, BookOpen } from "lucide-react";
 import { toast } from "sonner";
-import { track } from "@/lib/analytics";
+import { track, pendoTrack } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/dashboard/student")({
   head: () => ({ meta: [{ title: "Student Dashboard — EscapeLearn" }] }),
@@ -63,6 +63,10 @@ function StudentDashboard() {
         return;
       }
       track("student_joined_via_code", { code: code.toUpperCase() });
+      pendoTrack("student_joined_via_code", {
+        room_code: code.toUpperCase(),
+        escape_room_id: data.id,
+      });
       navigate({ to: "/play/$roomId/briefing", params: { roomId: data.id } });
     } finally {
       setJoining(false);
