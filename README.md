@@ -114,7 +114,7 @@ npm run dev
 
 ## 👤 About This Project
 
-Built solo in [X days] for **Everyone Ships Now**, Mind The Product's global hackathon (June 2026). The brief: ship something *real*, *deployed*, and instrumented with Novus.ai — no themes, no required APIs beyond that.
+Built solo in 10 days for **Everyone Ships Now**, Mind The Product's global hackathon (June 2026). The brief: ship something *real*, *deployed*, and instrumented with Novus.ai — no themes, no required APIs beyond that.
 
 This project is also a demonstration of:
 - End-to-end product thinking — from a real pain point to a measurable learning outcome
@@ -122,7 +122,6 @@ This project is also a demonstration of:
 - Designing a B2C *and* B2B2C flow (student solo play + teacher classroom mode) in a single coherent product
 - Shipping a polished, deployed, demo-ready product under real time pressure
 
-📫 **Let's connect:** [LinkedIn](#) · [Portfolio](#) · [Email](#)
 
 ---
 
