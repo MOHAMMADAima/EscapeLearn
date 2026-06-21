@@ -6,7 +6,7 @@ EscapeLearn turns any course PDF into a fully playable escape room in under 20 s
 
 > 🏆 Built for **[Everyone Ships Now](https://mindtheproduct.devpost.com/)** — Mind The Product's World Product Day 2026 hackathon.
 
-🎥 **[Watch the demo video](#)** · 🔗 **[Try it live](#)** · 📄 **[Devpost submission](#)**
+ 🔗 **[Try it live](#https://escape-learn.lovable.app/)** · 📄 **[Devpost submission](#https://devpost.com/software/escaplearn?ref_content=user-portfolio&ref_feature=in_progress)**
 
 ---
 
