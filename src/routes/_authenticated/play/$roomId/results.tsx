@@ -119,6 +119,13 @@ function Results() {
       .eq("id", sess!.id);
     setSaved(true);
     track("game_completed", { total_time: seconds, score, hints_used: sess!.hints_used, escaped, rooms_completed: completedRooms, total_rooms: totalRooms });
+    track("confidence_saved", {
+      roomId,
+      session_id: sess!.id,
+      pre_scores: sess!.pre_confidence_scores,
+      post_scores: post,
+      concepts,
+    });
     toast.success("Results saved");
   }
 
