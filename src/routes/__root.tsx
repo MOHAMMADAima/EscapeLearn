@@ -110,7 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         src: "https://cdn.novus.ai/track.js",
         async: true,
-        "data-application-id": "6356249249775616",
+        "data-application-id": "4999723490672640",
         "data-subscription-id": "5572102407258112",
       } as never,
     ],
@@ -144,6 +144,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
+    // Initialize Pendo for anonymous tracking; upgraded to identified visitor via pendo.identify() on sign-in.
+    pendo.initialize();
     // Resume ambient music across navigation if the user previously enabled it.
     ambientAudio.hydrate();
   }, []);
