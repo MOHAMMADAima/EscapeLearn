@@ -62,7 +62,7 @@ function StudentDashboard() {
         toast.error("No room with that code");
         return;
       }
-      track("student_joined_via_code", { code: code.toUpperCase() });
+      track("student_joined_via_code", { code: code.toUpperCase(), escape_room_id: data.id });
       navigate({ to: "/play/$roomId/briefing", params: { roomId: data.id } });
     } finally {
       setJoining(false);

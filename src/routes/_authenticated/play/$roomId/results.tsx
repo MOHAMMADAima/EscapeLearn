@@ -118,7 +118,7 @@ function Results() {
       })
       .eq("id", sess!.id);
     setSaved(true);
-    track("game_completed", { total_time: seconds, score, hints_used: sess!.hints_used });
+    track("game_completed", { total_time: seconds, score, hints_used: sess!.hints_used, escaped, rooms_completed: completedRooms, total_rooms: totalRooms });
     toast.success("Results saved");
   }
 
@@ -128,7 +128,7 @@ function Results() {
       `I escaped "${er!.title}" on EscapeLearn in ${fmt(seconds)} — can you beat it? Code: ${er!.room_code} — ${url}`,
     );
     toast.success("Share text copied");
-    track("results_shared", { roomId });
+    track("results_shared", { roomId, score, total_time: seconds, escaped, room_code: er!.room_code });
   }
 
   return (

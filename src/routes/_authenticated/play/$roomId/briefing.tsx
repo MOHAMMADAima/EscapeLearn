@@ -79,7 +79,7 @@ function Briefing() {
         if (error) throw error;
         sessionId = sess.id;
       }
-      track("game_started", { roomId, sessionId });
+      track("game_started", { roomId, sessionId, is_resume: !!existing, room_count: rooms.length });
       const target = rooms[currentIdx];
       if (!target) throw new Error("No rooms");
       if (target.is_boss_room) {

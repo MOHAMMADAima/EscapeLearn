@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { GraduationCap, Users, Sparkles, Lock, KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 import { LandingScene } from "@/components/landing/LandingScene";
 import { NavBar } from "@/components/landing/NavBar";
 
@@ -44,6 +45,7 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success(`Welcome, ${trimmedName}!`);
+        track("user_signed_up", { role, referral_role_param: roleParam });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -58,6 +60,9 @@ function AuthPage() {
         .eq("id", u.user.id)
         .maybeSingle();
       const userRole = (profile?.role ?? role) as "student" | "teacher";
+      if (mode === "signin") {
+        track("user_signed_in", { role: userRole });
+      }
 
       pendo.identify({
         visitor: {
