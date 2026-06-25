@@ -110,7 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         src: "https://cdn.novus.ai/track.js",
         async: true,
-        "data-application-id": "-323232",
+        "data-application-id": "6356249249775616",
         "data-subscription-id": "5572102407258112",
       } as never,
     ],
