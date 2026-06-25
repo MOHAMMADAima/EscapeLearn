@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Copy, Play, Save, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/teacher/review/$roomId")({
   head: () => ({ meta: [{ title: "Review escape room — EscapeLearn" }] }),
@@ -60,6 +61,7 @@ function TeacherReview() {
     if (!er) return;
     navigator.clipboard.writeText(er.room_code);
     toast.success("Room code copied");
+    track("room_code_copied", { room_code: er.room_code, escape_room_id: er.id, source_page: "teacher_review" });
   }
 
   function updateRoomField<K extends keyof Room>(id: string, key: K, value: Room[K]) {
@@ -100,8 +102,12 @@ function TeacherReview() {
       })
       .eq("id", r.id);
     setSavingId(null);
-    if (error) toast.error(error.message);
-    else toast.success(`Saved "${r.title}"`);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success(`Saved "${r.title}"`);
+      track("room_content_saved", { room_id: r.id, escape_room_id: roomId, room_number: r.room_number, is_boss_room: r.is_boss_room, mechanic: r.mechanic });
+    }
   }
 
   async function saveEscape() {
@@ -116,8 +122,12 @@ function TeacherReview() {
       })
       .eq("id", er.id);
     setSavingEr(false);
-    if (error) toast.error(error.message);
-    else toast.success("Intro saved");
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Intro saved");
+      track("escape_room_intro_saved", { escape_room_id: er.id });
+    }
   }
 
   if (!er) {

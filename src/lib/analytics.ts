@@ -1,9 +1,10 @@
-// Lightweight Novus.ai event tracker (graceful no-op if script not loaded).
+// Lightweight event tracker (graceful no-op if script not loaded).
 type Props = Record<string, unknown>;
 
 declare global {
   interface Window {
     novus?: { track?: (event: string, props?: Props) => void };
+    pendo?: { track?: (event: string, props?: Props) => void };
   }
 }
 
@@ -11,6 +12,11 @@ export function track(event: string, props?: Props) {
   if (typeof window === "undefined") return;
   try {
     window.novus?.track?.(event, props);
+  } catch {
+    /* ignore */
+  }
+  try {
+    window.pendo?.track?.(event, props);
   } catch {
     /* ignore */
   }

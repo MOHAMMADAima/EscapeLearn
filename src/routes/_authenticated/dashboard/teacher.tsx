@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { Sparkles, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/dashboard/teacher")({
   head: () => ({ meta: [{ title: "Teacher Dashboard — EscapeLearn" }] }),
@@ -47,9 +48,10 @@ function TeacherDashboard() {
       });
   }, [user]);
 
-  function copy(code: string) {
+  function copy(code: string, escapeRoomId: string) {
     navigator.clipboard.writeText(code);
     toast.success("Code copied");
+    track("room_code_copied", { room_code: code, escape_room_id: escapeRoomId, source_page: "teacher_dashboard" });
   }
 
   return (
@@ -86,7 +88,7 @@ function TeacherDashboard() {
                 <div className="font-mono text-3xl tracking-[0.3em] text-primary">{r.room_code}</div>
               </div>
               <button
-                onClick={() => copy(r.room_code)}
+                onClick={() => copy(r.room_code, r.id)}
                 className="rounded-md border border-border bg-card p-2 transition hover:bg-accent"
                 aria-label="Copy code"
               >

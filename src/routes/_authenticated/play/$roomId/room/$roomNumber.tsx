@@ -130,6 +130,10 @@ function RoomPage() {
         room_number: current.room_number,
         time_spent: timeSpent,
         hints_used: hintsUsed,
+        mechanic: current.mechanic,
+        roomId,
+        sessionId,
+        concept: current.concept,
       });
     } catch (e) {
       console.error(e);
@@ -150,7 +154,7 @@ function RoomPage() {
   function handleWrong() {
     setWrongFlash((n) => n + 1);
     if (current) {
-      track("answer_incorrect", { room_number: current.room_number });
+      track("answer_incorrect", { room_number: current.room_number, mechanic: current.mechanic, roomId, concept: current.concept });
     }
   }
 
@@ -172,7 +176,7 @@ function RoomPage() {
     } catch (e) {
       console.error(e);
     }
-    if (current) track("hint_used", { room_number: current.room_number });
+    if (current) track("hint_used", { room_number: current.room_number, is_boss_room: false, roomId, sessionId });
   }
 
   if (!current) {

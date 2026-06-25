@@ -74,7 +74,7 @@ function BossRoom() {
       .from("game_sessions")
       .update({ hints_used: (data?.hints_used ?? 0) + 1 })
       .eq("id", sessionId);
-    if (boss) track("hint_used", { room_number: boss.room_number });
+    if (boss) track("hint_used", { room_number: boss.room_number, is_boss_room: true, roomId, sessionId });
   }
 
   async function submit() {
@@ -103,12 +103,13 @@ function BossRoom() {
       if (res.is_correct) {
         setSuccess(true);
         setFeedback({ ok: true, text: res.feedback });
-        track("boss_room_completed", { time_spent: timeSpent });
+        track("boss_room_completed", { time_spent: timeSpent, hint_used: hintShown, roomId, sessionId, concept: boss.concept });
         setTimeout(() => {
           navigate({ to: "/play/$roomId/results", params: { roomId } });
         }, 1800);
       } else {
         setFeedback({ ok: false, text: res.feedback });
+        track("boss_answer_incorrect", { roomId, sessionId, time_spent: timeSpent, hint_used: hintShown, concept: boss.concept });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed");
@@ -118,6 +119,7 @@ function BossRoom() {
   }
 
   function giveUp() {
+    track("game_abandoned", { roomId, sessionId, time_spent_in_boss: Math.round((Date.now() - startRef.current) / 1000), hint_used: hintShown });
     navigate({ to: "/play/$roomId/results", params: { roomId } });
   }
 

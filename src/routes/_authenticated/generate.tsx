@@ -52,7 +52,7 @@ function GeneratePage() {
     if (!file) return;
     setBusy(true);
     setStep(0);
-    track("pdf_uploaded", { name: file.name, size: file.size });
+    track("pdf_uploaded", { name: file.name, size: file.size, subject: subject || undefined, user_role: profile?.role });
     const interval = setInterval(() => {
       setStep((s) => (s < STEPS.length - 2 ? s + 1 : s));
     }, 2500);
@@ -66,7 +66,7 @@ function GeneratePage() {
       });
       clearInterval(interval);
       setStep(STEPS.length - 1);
-      track("escape_room_generated", { escapeRoomId: res.escapeRoomId });
+      track("escape_room_generated", { escapeRoomId: res.escapeRoomId, subject: subject || undefined, user_role: profile?.role, pdf_name: file.name, pdf_size: file.size });
       setTimeout(() => {
         if (profile?.role === "teacher") {
           navigate({
