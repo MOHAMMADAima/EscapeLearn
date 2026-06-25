@@ -144,7 +144,6 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    pendo.initialize({ visitor: { id: '' } });
     // Resume ambient music across navigation if the user previously enabled it.
     ambientAudio.hydrate();
   }, []);

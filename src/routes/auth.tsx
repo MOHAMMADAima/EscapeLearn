@@ -45,7 +45,6 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success(`Welcome, ${trimmedName}!`);
-        track("user_signed_up", { role, referral_role_param: roleParam });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -60,9 +59,6 @@ function AuthPage() {
         .eq("id", u.user.id)
         .maybeSingle();
       const userRole = (profile?.role ?? role) as "student" | "teacher";
-      if (mode === "signin") {
-        track("user_signed_in", { role: userRole });
-      }
 
       pendo.identify({
         visitor: {
@@ -73,6 +69,13 @@ function AuthPage() {
           created_at: profile?.created_at,
         },
       });
+
+      // Fire analytics events after visitor is identified so they are attributed correctly
+      if (mode === "signup") {
+        track("user_signed_up", { role: userRole, referral_role_param: roleParam });
+      } else {
+        track("user_signed_in", { role: userRole });
+      }
 
       navigate({
         to: userRole === "teacher" ? "/dashboard/teacher" : "/dashboard/student",
