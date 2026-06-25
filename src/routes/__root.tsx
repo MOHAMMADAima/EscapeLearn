@@ -144,8 +144,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    // Initialize Pendo for anonymous tracking; upgraded to identified visitor via pendo.identify() on sign-in.
-    pendo.initialize();
+    // Initialize for anonymous tracking; upgraded to identified visitor via pendo.identify() on sign-in.
+    pendo.initialize({
+      visitor: { id: "ANONYMOUS" },
+      account: { id: "ANONYMOUS" },
+    });
     // Resume ambient music across navigation if the user previously enabled it.
     ambientAudio.hydrate();
   }, []);
