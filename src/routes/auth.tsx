@@ -68,6 +68,10 @@ function AuthPage() {
           role: userRole,
           created_at: profile?.created_at,
         },
+        account: {
+          id: u.user.id,
+          role: userRole,
+        },
       });
 
       // Fire analytics events after visitor is identified so they are attributed correctly
