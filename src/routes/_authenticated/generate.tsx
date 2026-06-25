@@ -80,7 +80,9 @@ function GeneratePage() {
     } catch (err) {
       clearInterval(interval);
       setBusy(false);
-      toast.error(err instanceof Error ? err.message : "Generation failed");
+      const errorMessage = err instanceof Error ? err.message : "Generation failed";
+      track("escape_room_generation_failed", { error_message: errorMessage, subject: subject || undefined, pdf_name: file.name, pdf_size: file.size, user_role: profile?.role });
+      toast.error(errorMessage);
     }
   }
 
