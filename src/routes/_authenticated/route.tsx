@@ -18,6 +18,7 @@ function AuthedLayout() {
   const router = useRouter();
 
   async function signOut() {
+    pendo.clearSession();
     await supabase.auth.signOut();
     router.navigate({ to: "/auth" });
   }

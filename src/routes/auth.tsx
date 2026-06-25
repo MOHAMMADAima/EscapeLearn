@@ -54,10 +54,21 @@ function AuthPage() {
       if (!u.user) throw new Error("No user");
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("role,full_name,created_at")
         .eq("id", u.user.id)
         .maybeSingle();
       const userRole = (profile?.role ?? role) as "student" | "teacher";
+
+      pendo.identify({
+        visitor: {
+          id: u.user.id,
+          email: u.user.email ?? email,
+          full_name: profile?.full_name ?? (mode === "signup" ? fullName.trim() : undefined),
+          role: userRole,
+          created_at: profile?.created_at,
+        },
+      });
+
       navigate({
         to: userRole === "teacher" ? "/dashboard/teacher" : "/dashboard/student",
       });
