@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
+import { track } from "@/lib/analytics";
 import { KeyRound, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -18,6 +19,7 @@ function AuthedLayout() {
   const router = useRouter();
 
   async function signOut() {
+    track("user_signed_out", { role: profile?.role });
     pendo.clearSession();
     await supabase.auth.signOut();
     router.navigate({ to: "/auth" });
