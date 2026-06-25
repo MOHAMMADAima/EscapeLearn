@@ -67,6 +67,9 @@ function GeneratePage() {
       clearInterval(interval);
       setStep(STEPS.length - 1);
       track("escape_room_generated", { escapeRoomId: res.escapeRoomId, subject: subject || undefined, user_role: profile?.role, pdf_name: file.name, pdf_size: file.size });
+      if (profile?.role === "teacher") {
+        track("teacher_room_created", { escapeRoomId: res.escapeRoomId, subject: subject || undefined });
+      }
       setTimeout(() => {
         if (profile?.role === "teacher") {
           navigate({
