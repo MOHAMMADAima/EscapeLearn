@@ -6,6 +6,8 @@ export type AppProfile = {
   id: string;
   email: string;
   role: "student" | "teacher";
+  full_name: string | null;
+  created_at: string | null;
 };
 
 export function useSession() {
@@ -41,7 +43,7 @@ export function useSession() {
     setLoading(true);
     supabase
       .from("profiles")
-      .select("id,email,role")
+      .select("id,email,role,full_name,created_at")
       .eq("id", user.id)
       .maybeSingle()
       .then(({ data }) => {
