@@ -137,10 +137,19 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    // Initialize for anonymous tracking; upgraded to identified visitor via pendo.identify() on sign-in.
+    // Generate (or reuse) a stable anonymous ID so each unique browser session
+    // is tracked individually instead of collapsing all traffic into one record.
+    let anonId = localStorage.getItem("_esc_anon_id");
+    if (!anonId) {
+      anonId = "anon-" + crypto.randomUUID();
+      localStorage.setItem("_esc_anon_id", anonId);
+    }
+    // Initialize for anonymous tracking; upgraded to identified visitor via
+    // pendo.identify() on sign-in (auth.tsx) and on every authenticated page
+    // load (_authenticated/route.tsx).
     pendo.initialize({
-      visitor: { id: "ANONYMOUS" },
-      account: { id: "ANONYMOUS" },
+      visitor: { id: anonId },
+      account: { id: anonId },
     });
     // Resume ambient music across navigation if the user previously enabled it.
     ambientAudio.hydrate();

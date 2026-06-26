@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { track } from "@/lib/analytics";
@@ -17,6 +18,25 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthedLayout() {
   const { profile } = useSession();
   const router = useRouter();
+
+  // Re-identify the visitor on every authenticated page load so that
+  // returning users (who skip the auth flow) are still tracked correctly.
+  useEffect(() => {
+    if (!profile) return;
+    pendo.identify({
+      visitor: {
+        id: profile.id,
+        email: profile.email,
+        full_name: profile.full_name,
+        role: profile.role,
+        created_at: profile.created_at,
+      },
+      account: {
+        id: profile.id,
+        role: profile.role,
+      },
+    });
+  }, [profile?.id]);
 
   async function signOut() {
     track("user_signed_out", { role: profile?.role });
